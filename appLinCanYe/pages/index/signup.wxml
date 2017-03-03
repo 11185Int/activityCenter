@@ -1,0 +1,30 @@
+
+<!-- signup.wxml -->
+<page>
+  <view class="container">
+    <view class="userhd">填写个人信息</view>
+    <view class="userinfo">
+      <image bindtap="bindImgChange" class="userinfo-avatar" src="{{imgUrl}}" background-size="cover"></image>
+    </view>
+    <view class="profiles">
+      <view class="profile">
+        <text>部门：</text>
+        <picker class="depart" bindchange="bindPickerChange" value="{{departIndex}}" range="{{departArray}}">
+          <view>{{department?department:departArray[departIndex]}}</view>
+        </picker>
+      </view>
+      <view class="profile">
+        <text>姓名：</text>
+        <input class="input name" value="{{name?name:''}}" placeholder="{{name?'':'请填写真实姓名'}}" placeholder-class="placeholder" bindblur="bindNameChange" auto-focus/>
+      </view>
+      <view class="profile">
+        <text>手机号：</text>
+        <input class="input cellphone" value="{{mobile?mobile:''}}" placeholder="{{mobile?'':'请填写联系手机'}}" placeholder-class="placeholder" bindblur="bindMobileChange" auto-focus/>
+      </view>
+    </view>
+    <button bindtap="bindViewTap" class="button" type="save" size="default">保存</button>
+    <toast hidden="{{toastHidden}}" duration="2000" bindchange="toastChange">
+      {{errInfo}}
+    </toast>
+  </view>
+</page>

@@ -1,0 +1,76 @@
+<page style="font-size:0.8rem;">
+  <view class="container">
+    <view class="hd">
+      <image class="userinfo-avatar" src="{{userInfo.headimgurl}}" background-size="cover"></image>
+      <text class="name">{{userInfo.name}}\n部门：{{userInfo.department}}</text>
+      <image class="image" bindtap="configClick" src="/image/config.png"></image>
+    </view>
+    <view class="weui-navbar">
+      <block wx:for-items="{{tabs}}" wx:key="{{index}}">
+        <view id="{{index}}" class="weui-navbar__item {{activeIndex == index ? 'weui-bar__item_on' : ''}}" bindtap="tabClick">
+          <view class="weui-navbar__title">{{item}}</view>
+        </view>
+      </block>
+      <view class="weui-navbar__slider" style="left: {{sliderLeft}}px; transform: translateX({{sliderOffset}}px); -webkit-transform: translateX({{sliderOffset}}px);">
+      </view>
+    </view>
+    <view class="weui-tab__panel">
+      <view class="weui-tab__content" hidden="{{activeIndex != 0}}">
+        <view style="padding-top:20rpx; padding-bottom:20rpx;">
+          <button bindtap="createClick" class="button" type="create">+ 新建活动</button>
+        </view>
+        <view style="border-bottom: 1rpx solid #ccc;"></view>
+        <block wx:for="{{createList}}">
+          <view class="list-item" bindtap="itemClick">
+            <view class="list-title">
+              <text class="status" wx:if="{{item.ac_status == '1'}}">招募中</text>
+              <text class="status-close" wx:else> 已截止 </text>
+              <text class="title">{{item.title}}</text>
+            </view>
+            <text>报名截止：{{item.end_datetime}}</text>
+            <text>活动时间：{{item.start_datetime}}-{{item.stop_datetime}}</text>
+            <text>地址：{{item.address}}</text>
+            <text hidden="{{item.remark==''}}">备注：{{item.remark}}</text>
+            <view hidden="{{item.enrolllist.length == 0}}" class="member">
+              <text style="align-self:center;" hidden="{{item.enrolllist.length == 0}}">参与者：</text>
+              <view wx:for="{{item.enrolllist}}" class="member-item">
+                <image hidden="{{index >= 5}}" class="avatar" src="{{item.headimgurl}}"></image>
+                <image hidden="{{index < 5}}" class="avatar" src="/image/etc.png"></image>
+              </view>
+            </view>
+          </view>
+          <view class="detail" id="{{item.acid}}" bindtap="manageDetailClick">查看详情</view>
+        </block>
+        <view hidden="{{loadMyMoreHidden}}" style="padding-top:50rpx; padding-bottom:30rpx; text-align: center;">没有更多了～</view>
+      </view>
+      <view class="weui-tab__content" hidden="{{activeIndex != 1}}">
+        <block wx:for="{{joinList}}">
+          <view class="list-item" id="{{item.id}}" bindtap="itemClick">
+            <view class="creater">
+              <image class="avatar" src="{{item.headimgurl}}"></image>
+              <text class="creater-name"> 发起人:{{item.name}}</text>
+            </view>
+            <view class="list-title">
+              <text class="status" wx:if="{{item.ac_status == '1'}}">招募中</text>
+              <text class="status-close" wx:else> 已截止 </text>
+              <text class="title">{{item.title}}</text>
+            </view>
+            <text>报名截止：{{item.end_datetime}}</text>
+            <text>活动时间：{{item.start_datetime}}-{{item.stop_datetime}}</text>
+            <text>地址：{{item.address}}</text>
+            <text hidden="{{item.remark==''}}">备注：{{item.remark}}</text>
+            <view hidden="{{item.enrolllist.length == 0}}" class="member">
+              <text style="align-self:center;" hidden="{{item.enrolllist.length == 0}}">参与者：</text>
+              <view wx:for="{{item.enrolllist}}" class="member-item">
+                <image hidden="{{index >= 5}}" class="avatar" src="{{item.headimgurl}}"></image>
+                <image hidden="{{index < 5}}" class="avatar" src="/image/etc.png"></image>
+              </view>
+            </view>
+          </view>
+          <view class="detail" id="{{item.acid}}" bindtap="joinDetailClick">查看详情</view>
+        </block>
+        <view hidden="{{loadEnrollMoreHidden}}" style="padding-top:50rpx; padding-bottom:30rpx; text-align: center;">没有更多了～</view>
+      </view>
+    </view>
+  </view>
+</page>

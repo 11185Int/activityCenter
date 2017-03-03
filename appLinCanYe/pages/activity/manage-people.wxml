@@ -1,0 +1,19 @@
+<page>
+  <view class="container" style="margin-left:20rpx; margin-right:20rpx;">
+    <view class="head">参与详情</view>
+    <text>已报名：{{num}}</text>
+    <block wx:for="{{enrolllist}}">
+      <view style="margin-top: 10rpx;" hidden="{{item.length == 0 ? true : false}}">
+        <view style="marigin-top:20rpx; text-align:center;">{{departArray[index]}}</view>
+        <view style="display: flex; flex-direction: row;">
+          <block wx:for="{{item}}">
+            <view style="display: flex; flex-direction: column;" class="member-item" id="{{item.id}}">
+              <image style="width:100rpx; height:100rpx; border-radius:50%;" src="{{item.headimgurl}}"></image>
+              <text style="padding-top:10rpx; text-align:center;">{{item.name}}（{{item.people}}）</text>
+            </view>
+          </block>
+        </view>
+      </view>
+    </block>
+  </view>
+</page>

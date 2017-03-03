@@ -1,0 +1,64 @@
+<page style>
+  <view class="container">
+    <view class="head">活动详情</view>
+    <view class="list-item">
+      <view>
+        <text class="status" wx:if="{{info.ac_status == '1'}}">招募中</text>
+        <text class="status-close" wx:else> 已截止 </text>
+        <text class="title">{{info.title}}</text>
+      </view>
+      <view class="creater">
+        <image class="avatar" src="{{info.headimgurl}}"></image>
+        <text class="creater-name"> 发起人:{{info.name}}</text>
+        <image class="image" style="margin-left:10rpx;" bindtap="call" src="/image/phone.png"></image>
+      </view>
+      <text>报名截止：{{info.end_datetime}}</text>
+      <text>活动时间：{{info.start_datetime}}-{{info.stop_datetime}}</text>
+      <text>地址：{{info.address}}</text>
+      <view hidden="{{!info.enrolllist}}" bindtap="managePeople">
+        <text>已报名：{{info.enrolllist.length}} 人</text>
+        <view class="member">
+          <view wx:for="{{info.enrolllist}}" class="member-item">
+            <image hidden="{{index >= 11}}" class="avatar" src="{{item.headimgurl}}"></image>
+            <image hidden="{{index < 11}}" class="avatar" src="/image/etc.png"></image>
+          </view>
+        </view>
+      </view>
+      <view style="display:flex; flex-direction:column;">
+        <text>注意事项：</text>
+        <text style="color:#aaa">{{info.remark}}</text>
+      </view>
+      <view style="display:flex; flex-direction:column;">
+        <text>活动风采：</text>
+        <view class="actimglist">
+          <view style="margin:10rpx;width:30.0%;" wx:for="{{actimglist}}" wx:key="{{index}}">
+            <image bindtap="bindActImgChange" id="{{index}}" class="actimg" mode="aspectFill" src="{{url + item.imgurl}}"></image>
+          </view>
+        </view>
+      </view>
+    </view>
+    <view class="choose" hidden="{{!(info.status == 0)}}">
+      <button type="join" bindtap="joinClick">参加</button>
+      <button type="refuse" bindtap="refuseClick">不参加</button>
+    </view>
+    <view class="choose" hidden="{{!(info.status == 1)}}">
+      <button type="refuse">已报名</button>
+      <button type="join" bindtap="refuseClick">取消报名</button>
+    </view>
+    <view class="choose" hidden="{{!(info.status == 2)}}">
+      <button type="refuse">已拒绝</button>
+      <button type="join" bindtap="joinClick">重新报名</button>
+    </view>
+
+    <!--弹框-->
+    <modal title="报名信息" class="join" hidden="{{joinHidden}}" no-cancel bindconfirm="joinChange" bindcancel="">
+      <view style="display:flex; flex-direction:row;">
+        <text>参与人数：</text>
+        <input bindblur="peopleChange" class="textarea-border" value="1" auto-focus/>
+      </view>
+    </modal>
+    <modal title="不参加原因" class="refuse" hidden="{{refuseHidden}}" no-cancel bindconfirm="refuseChange" bindcancel="">
+      <textarea bindblur="reasonChange" class="textarea-border" style="resize:false;width:500rpx;height:150rpx;align-self:center;" placeholder="请填写原因" />
+    </modal>
+  </view>
+</page>

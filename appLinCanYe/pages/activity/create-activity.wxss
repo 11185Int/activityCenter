@@ -1,0 +1,31 @@
+.title {
+    align-self: center;
+    align-items: center;
+    margin-top: 20rpx;
+}
+
+.profile {
+    margin-left: 120rpx;
+    margin-top: 30rpx;
+    display: flex;
+    flex-direction: row;
+    align-content: flex-start;
+}
+
+.issue {
+    margin-left: 60rpx;
+    resize: none;
+    width: 400rpx;
+    height: 100rpx;
+}
+
+.hint {
+    margin-left: 120rpx;
+    margin-top: 20rpx;
+    color: #aaa;
+    font-size: 0.8rem;
+}
+
+.time {
+    margin-left: 20rpx;
+}

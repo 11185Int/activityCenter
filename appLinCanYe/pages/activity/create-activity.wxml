@@ -1,0 +1,46 @@
+<page>
+  <view class="container">
+    <view class="title">新建活动</view>
+    <view class="profile">
+      <text>活动主题：</text>
+      <input bindblur="bindTitleChange" placeholder="请填写主题" auto-focus/>
+    </view>
+    <view class="profile">
+      <picker bindchange="bindSDateChange" mode="date" value="{{startDate}}">
+        <view>开始时间：{{startDate}}</view>
+      </picker>
+      <picker class="time" bindchange="bindSTimeChange" mode="time" value="{{startTime}}">
+        <view>{{startTime}}</view>
+      </picker>
+    </view>
+    <view class="profile">
+      <picker bindchange="bindCDateChange" mode="date" value="{{closingDate}}">
+        <view>报名截止：{{closingDate}}</view>
+      </picker>
+      <picker class="time" bindchange="bindCTimeChange" mode="time" value="{{closingTime}}">
+        <view>{{closingTime}}</view>
+      </picker>
+    </view>
+    <view class="profile">
+      <picker bindchange="bindEDateChange" mode="date" value="{{endDate}}">
+        <view>结束时间：{{endDate}}</view>
+      </picker>
+      <picker class="time" bindchange="bindETimeChange" mode="time" value="{{endTime}}">
+        <view>{{endTime}}</view>
+      </picker>
+    </view>
+    <view class="profile">
+      <text>活动地点：</text>
+      <input bindblur="bindAddressChange" placeholder="请输入活动地址" auto-focus/>
+    </view>
+    <view class="profile">
+      <text>备注：</text>
+      <textarea bindblur="bindIssueChange" class="issue" placeholder="非必填，可填写活动特别事项" maxlength="100" auto-focus/>
+    </view>
+    <text class="hint">*限制在50字内</text>
+    <button bindtap="bindViewTap" class="button" type="issue" size="default">发布</button>
+    <toast hidden="{{toastHidden}}" duration="2000" bindchange="toastChange">
+      {{errInfo}}
+    </toast>
+  </view>
+</page>

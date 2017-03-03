@@ -1,0 +1,34 @@
+.userinfo-avatar {
+  width: 128rpx;
+  height: 128rpx;
+  border-radius: 50%;
+}
+
+.hd {
+  font-size: 1rem;
+  margin-top: 20rpx;
+  margin-bottom: 20rpx;
+}
+.name {
+  margin-left: 80rpx;
+  margin-right: 80rpx;
+  align-self: center;
+}
+
+.weui-navbar {
+  position: relative;
+  border-top: 1rpx solid #ccc;
+  border-bottom: 1rpx solid #ccc;
+}
+
+.weui-tab__panel {
+    padding: 0rpx;
+}
+
+.detail {
+  border-top: 1rpx solid #ccc;
+  border-bottom: 1rpx solid #ccc;
+  padding-top: 10rpx;
+  padding-bottom: 10rpx;
+  text-align: center;
+}

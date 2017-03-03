@@ -1,0 +1,4 @@
+/* pages/activity/manage-people.wxss */
+.member-item {
+    margin: 10rpx;
+}

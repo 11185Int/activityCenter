@@ -1,0 +1,6 @@
+/* pages/activity/img-detail.wxss */
+.img-detail {
+    margin-top: 200rpx;
+    width:100%; 
+    height:600rpx;
+}
