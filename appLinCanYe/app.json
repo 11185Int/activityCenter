@@ -1,7 +1,7 @@
 {
   "pages":[
-    "pages/index/signup",
     "pages/index/index",
+    "pages/index/signup",
     "pages/activity/create-activity",
     "pages/activity/join-activity",
     "pages/activity/manage-activity",

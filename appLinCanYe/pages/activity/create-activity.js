@@ -1,20 +1,67 @@
 var app = getApp()
+Date.prototype.format = function (fmt) { //author: meizz 
+  var o = {
+    "M+": this.getMonth() + 1, //月份 
+    "d+": this.getDate(), //日 
+    "h+": this.getHours(), //小时 
+    "m+": this.getMinutes(), //分 
+    "s+": this.getSeconds(), //秒 
+    "q+": Math.floor((this.getMonth() + 3) / 3), //季度 
+    "S": this.getMilliseconds() //毫秒 
+  };
+  if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+  for (var k in o)
+    if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+  return fmt;
+}
+
 Page({
   data: {
     title: "",
-    startDate: '2017-01-01',
-    startTime: '12:00',
+    startDate: null,
+    startTime: null,
 
-    closingDate: '2017-01-01',
-    closingTime: '12:00',
+    closingDate: null,
+    closingTime: null,
 
-    endDate: '2017-01-01',
-    endTime: '12:00',
+    endDate: null,
+    endTime: null,
     address: "",
     issue: "",
-    toastHidden: true,
-    errInfo: "",
-    userid: "",
+  },
+
+  onShow: function () {
+    console.log('onShow')
+    this.initDate()
+  },
+
+  //初始化时间
+  initDate: function () {
+    var date = new Date().format("yyyy-MM-dd")
+    var time = new Date().format("hh:mm")
+    var endTime = new Date()
+    endTime.setMinutes(endTime.getMinutes() + 30)
+    endTime = endTime.format("hh:mm")
+    this.setData({
+      startDate: date,
+      startTime: time,
+      closingDate: date,
+      closingTime: endTime,
+      endDate: date,
+      endTime: endTime,
+    })
+  },
+  bindLocationTap:function() {
+    var that = this
+    wx.chooseLocation({
+      success:function(res) {
+      console.log(res)
+      console.log(res.address)
+      that.setData({
+        address:res.address
+      })
+    }
+    })
   },
   bindSDateChange: function (e) {
     this.setData({
@@ -50,14 +97,7 @@ Page({
     var that = this
     this.data.userid = wx.getStorageSync('userid')
     console.log('remark' + this.data.issue)
-    this.addDate(function (res) {
-      that.setData({
-        toastHidden: false,
-        errInfo: res.data.msg,
-      })
-    }, this.data.userid, this.data.title, this.data.startDate + ' ' + this.data.startTime,
-      this.data.closingDate + ' ' + this.data.closingTime,
-      this.data.endDate + ' ' + this.data.endTime, this.data.address, this.data.issue)
+    this.addDate()
   },
 
   bindTitleChange: function (e) {
@@ -76,54 +116,26 @@ Page({
     this.setData({
       issue: e.detail.value
     })
+    console.log("bei zhu " + e.detail.issue)
   },
-  toastChange: function () {
-    this.setData({
-      toastHidden: true
-    })
-  },
+
   //插入活动数据
-  addDate: function (cb, userid, title, start_datetime, end_datetime, stop_datetime, address, remark) {
+  addDate: function () {
     var that = this
-    console.log('remark' + remark)
-    wx.request({
-      url: app.globalData.urlPrefix + '/index.php/Xcx/Date/addDate',
-      data: {
-        userid: userid,
-        title: title,
-        start_datetime: start_datetime,
-        end_datetime: end_datetime,
-        stop_datetime: stop_datetime,
-        address: address,
-        remark: remark,
-      },
-      method: 'POST',
-      header: {
-        'content-type': 'application/x-www-form-urlencoded'
-      },
-      success: function (res) {
-        console.log(res);
-        if (res.data.status === 1) {
-          // wx.showToast({
-          //   title: '发布成功',
-          //   icon: "success",
-          //   duration: 2000
-          // })
-          wx.redirectTo({
-            url: "/pages/index/index"
-          })
-        } else {
-          typeof cb == "function" && cb(res)
-        }
-      },
-      fail: function (res) {
-        wx.showToast({
-          title: '发布失败',
-          icon: "success",
-          duration: 2000
-        })
-        console.log(res)
-      }
-    });
+    console.log("备注 " + this.data.issue)
+    app.postApi('/index.php/Xcx/Date/addDate', {
+      third_session: app.globalData.third_session,
+      title: this.data.title,
+      start_datetime: this.data.startDate + ' ' + this.data.startTime,
+      end_datetime: this.data.closingDate + ' ' + this.data.closingTime,
+      stop_datetime: this.data.endDate + ' ' + this.data.endTime,
+      address: this.data.address,
+      remark: this.data.issue,
+    }, function (res) {
+      console.log(res)
+      wx.redirectTo({
+        url: "/pages/index/index"
+      })
+    })
   },
 })

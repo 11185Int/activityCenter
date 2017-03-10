@@ -1,60 +1,104 @@
 //app.js
 App({
   globalData: {
+    // urlPrefix: "http://192.183.3.91/tpcluster",
+    urlPrefix:"https://weiapp.doyoteam.com/justin",
     userInfo: null,
-    urlPrefix: "http://192.183.3.91/tpcluster",
-    userid: '',
-    acid: '',
-    enrolllist:{},
+    enrolllist: {},
+    third_session: null,
   },
 
   onLaunch: function () {
     //调用API从本地缓存中获取数据
-    var logs = wx.getStorageSync('logs') || []
-    logs.unshift(Date.now())
-    wx.setStorageSync('logs', logs)
-    var openid = wx.getStorageSync('openid')
-    console.log('openid ' + openid)
-    var userid = wx.getStorageSync('userid')
-    console.log('userid'  + userid)
-    this.islogin(openid)
-  },
-
-  getUserInfo: function (cb) {
+    console.log("onLaunch")
     var that = this
-    if (this.globalData.userInfo) {
-      typeof cb == "function" && cb(this.globalData.userInfo)
-    } else {
-      //调用登录接口
-      wx.login({
-        success: function (res) {
-          console.log(res)
-          wx.getUserInfo({
-            success: function (res) {
-              console.log(res)
-              that.globalData.userInfo = res.userInfo
-              typeof cb == "function" && cb(that.globalData.userInfo)
-            }
-          })
-        }
+    this.globalData.third_session = wx.getStorageSync('third_session')
+    if (!this.globalData.third_session) {
+      that.login(function () {
+        that.getSession()
       })
     }
   },
 
-  //判断是否插入数据
-  islogin: function (openid) {
+  //封装好的访问类
+  postApi: function (url, data, success) {
+    console.log("postApi")
+    data.third_session = this.globalData.third_session
+    console.log("session " + data.third_session)
+    var that = this
     wx.request({
-      url: 'http://192.183.3.91/tpcluster' + '/index.php/Xcx/Date/isLogin',
+      url: that.globalData.urlPrefix + url,
+      data: data,
+      method: 'POST',
+      header: {
+        'content-type': 'application/x-www-form-urlencoded'
+      },
+      success: function (res) {
+        var result = res.data
+        console.log(result)
+        if (result.status == 1) {
+          typeof success == "function" && success(res.data)
+        } else if (result.status == -11 || result.status == -10) {
+          that.login(function () {
+            that.getSession(function () {
+              that.postApi(url, data, success)
+            })
+          })
+        } else {
+          wx.showToast({
+            title: res.msg,
+            icon: "success",
+            duration: 2000
+          })
+        }
+      },
+      fail: function (res) {
+        console.log(res)
+      }
+    });
+  },
+
+  //调用登录接口
+  login: function (cb) {
+    console.log("login")
+    var that = this
+    wx.login({
+      success: function (res) {
+        console.log('code' + res.code)
+        if (res.code) {
+          that.globalData.code = res.code
+          typeof cb == "function" && cb()
+        }
+      }
+    })
+  },
+
+  //判断是否已注册
+  getSession: function (cb) {
+    console.log("getSession")
+    var that = this
+    console.log("code " + that.globalData.code)
+    wx.request({
+      url: that.globalData.urlPrefix + '/index.php/Xcx/Date/getSession',
       data: {
-        openid: openid
+        code: that.globalData.code
       },
       method: 'POST',
       header: {
-        'content-type':'application/x-www-form-urlencoded'
+        'content-type': 'application/x-www-form-urlencoded'
       },
       success: function (res) {
         console.log(res);
-        if (res.data.status === 1) {
+        if (res.data.data) {
+          console.log("got session")
+          that.globalData.third_session = res.data.data.third_session
+          wx.setStorageSync('third_session', res.data.data.third_session)
+        }
+        if (typeof cb == "function") {
+          console.log("reget")
+          cb(res)
+        } else if (res.data.status === 1) {
+          wx.setStorageSync('isRegistered', "true")
           wx.redirectTo({
             url: "/pages/index/index"
           })

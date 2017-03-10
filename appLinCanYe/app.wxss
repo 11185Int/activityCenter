@@ -33,6 +33,12 @@ view, text {
   align-self: center;
 }
 
+.input {
+  padding-left: 20rpx;
+  padding-right: 20rpx; 
+  width: 300rpx;
+}
+
 .button {
 position:relative;
 display:block;
@@ -53,17 +59,16 @@ font-size: 0.8rem;
 }
 
 button[type="save"] {
+width: 400rpx;
 color:#FFFFFF;
 background-color:#E64340;
 margin-top:100rpx;
 margin-bottom:20rpx;
-padding-left: 200rpx;
-padding-right: 200rpx;
 }
 
 button[type="create"] {
 color:#FFFFFF;
-background-color:#08D683;
+background-color:#1AAD19;
 margin-top: 20rpx;
 margin-bottom:20rpx;
 margin-left: 100rpx;
@@ -73,10 +78,9 @@ margin-right: 100rpx;
 button[type="issue"] {
 color:#FFFFFF;
 background-color:#E64340;
+width: 400rpx;
 margin-top:20rpx;
 margin-bottom:20rpx;
-padding-left: 200rpx;
-padding-right: 200rpx;
 }
 
 button[type="join"] {
@@ -124,7 +128,7 @@ font-size: 0.8rem;
   -webkit-tap-highlight-color: transparent;
   overflow: hidden;
   color: #fff;
-  background-color: #08D683;
+  background-color: #1AAD19;
 }
 
 .status-close {

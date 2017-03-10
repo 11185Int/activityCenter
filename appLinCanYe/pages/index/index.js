@@ -29,28 +29,25 @@ Page({
                 });
             }
         });
-        app.globalData.userid = wx.getStorageSync('userid')
     },
 
     onShow: function () {
         console.log('onShow')
         var that = this
-        if (app.globalData.userid) {
-            this.getUserInfo(function (res) {
-                that.setData({
-                    userInfo: res.data.data.myUserinfo,
-                })
-            }, app.globalData.userid)
+        if (app.globalData.third_session) {
+            this.getUserInfo()
             this.getMyActInfo(function (res) {
+                console.log("get " + res)
                 that.setData({
-                    createList: res.data.data.myAcinfoList,
+                    createList: res.data.myAcinfoList,
                 })
-            }, app.globalData.userid, this.data.currentMyPage, '10')
+            })
             this.getEnrollActInfo(function (res) {
+                console.log("get " + res)
                 that.setData({
-                    joinList: res.data.data.acList
+                    joinList: res.data.acList
                 })
-            }, app.globalData.userid, this.data.currentEnrollPage, '10')
+            })
         }
     },
 
@@ -58,21 +55,19 @@ Page({
         console.log('refresh')
         var that = this
         if (app.globalData.userid) {
-            this.getUserInfo(function (res) {
-                that.setData({
-                    userInfo: res.data.data.myUserinfo,
-                })
-            }, app.globalData.userid)
+            this.getUserInfo()
             this.getMyActInfo(function (res) {
+                console.log("get " + res)
                 that.setData({
-                    createList: res.data.data.myAcinfoList
+                    createList: res.data.myAcinfoList,
                 })
-            }, app.globalData.userid, this.data.currentMyPage, '10')
+            })
             this.getEnrollActInfo(function (res) {
+                console.log("get " + res)
                 that.setData({
-                    joinList: res.data.data.acList
+                    joinList: res.data.acList
                 })
-            }, app.globalData.userid, this.data.currentEnrollPage, '10')
+            })
         }
         wx.stopPullDownRefresh()
     },
@@ -102,7 +97,7 @@ Page({
                     })
                 }
                 wx.hideToast();
-            }, app.globalData.userid, this.data.currentMyPage, '10')
+            })
 
         } else {
             if (this.data.loadEnrollMoreHidden) {
@@ -125,88 +120,43 @@ Page({
                     })
                 }
                 wx.hideToast();
-            }, app.globalData.userid, this.data.currentEnrollPage, '10')
+            })
         }
 
     },
 
     //获取用户数据
-    getUserInfo: function (cb, userid) {
+    getUserInfo: function () {
+        console.log("getInfo " + app.globalData.third_session)
         var that = this
-        console.log('userid' + userid)
-        wx.request({
-            url: app.globalData.urlPrefix + '/index.php/Xcx/Date/getUserinfo',
-            data: {
-                userid: userid,
-            },
-            method: 'POST',
-            header: {
-                'content-type': 'application/x-www-form-urlencoded'
-            },
-            success: function (res) {
-                console.log(res.data);
-                if (res.data.status === 1 && typeof cb == "function") {
-                    cb(res)
-                }
-            },
-            fail: function (res) {
-                console.log(res.data)
-            }
-        });
+        app.postApi('/index.php/Xcx/Date/getUserinfo', {
+            third_session: app.globalData.third_session
+        }, function (res) {
+            console.log("get " + res)
+            that.setData({
+                userInfo: res.data.myUserinfo,
+            })
+        })
     },
 
     //获取创建活动数据
-    getMyActInfo: function (cb, userid, currentPage, pageSize) {
+    getMyActInfo: function (cb) {
         var that = this
-        console.log('page ' + currentPage)
-        wx.request({
-            url: app.globalData.urlPrefix + '/index.php/Xcx/Date/myAcinfo',
-            data: {
-                userid: userid,
-                page: currentPage,
-                pagesize: pageSize,
-            },
-            method: 'POST',
-            header: {
-                'content-type': 'application/x-www-form-urlencoded'
-            },
-            success: function (res) {
-                console.log(res.data);
-                if (res.data.status === 1 && typeof cb == "function") {
-                    cb(res)
-                }
-            },
-            fail: function (res) {
-                console.log(res.data)
-            }
-        });
+        app.postApi('/index.php/Xcx/Date/myAcinfo', {
+            third_session: app.globalData.third_session,
+            page: this.data.currentMyPage,
+            pagesize: '10',
+        }, cb)
     },
 
     //获取可参与活动数据
-    getEnrollActInfo: function (cb, userid, currentPage, pageSize) {
+    getEnrollActInfo: function (cb) {
         var that = this
-        console.log('page ' + currentPage)
-        wx.request({
-            url: app.globalData.urlPrefix + '/index.php/Xcx/Date/acList',
-            data: {
-                userid: userid,
-                page: currentPage,
-                pagesize: pageSize,
-            },
-            method: 'POST',
-            header: {
-                'content-type': 'application/x-www-form-urlencoded'
-            },
-            success: function (res) {
-                console.log(res.data);
-                if (typeof cb == "function") {
-                    cb(res)
-                }
-            },
-            fail: function (res) {
-                console.log(res.data)
-            }
-        });
+        app.postApi('/index.php/Xcx/Date/acList', {
+            third_session: app.globalData.third_session,
+            page: this.data.currentEnrollPage,
+            pagesize: '10',
+        }, cb)
     },
 
     tabClick: function (e) {
@@ -223,19 +173,16 @@ Page({
     },
 
     manageDetailClick: function (e) {
-        app.globalData.acid = e.currentTarget.id
         console.log('acid' + e.currentTarget.id)
         wx.navigateTo({
-            url: '../activity/manage-activity'
+            url: '../activity/manage-activity?acid=' + e.currentTarget.id
         })
     },
 
     joinDetailClick: function (e) {
-        console.log(e.currentTarget.id)
-        app.globalData.acid = e.currentTarget.id
-        console.log("acid " + app.globalData.acid)
+        console.log("acid " + e.currentTarget.id)
         wx.navigateTo({
-            url: '../activity/join-activity'
+            url: '../activity/join-activity?acid='+ e.currentTarget.id
         })
     },
 

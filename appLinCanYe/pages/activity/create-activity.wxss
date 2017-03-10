@@ -9,13 +9,14 @@
     margin-top: 30rpx;
     display: flex;
     flex-direction: row;
-    align-content: flex-start;
 }
 
 .issue {
-    margin-left: 60rpx;
+    padding: 0rpx;
+    margin:0rpx; 
+    
     resize: none;
-    width: 400rpx;
+    width: 300rpx;
     height: 100rpx;
 }
 

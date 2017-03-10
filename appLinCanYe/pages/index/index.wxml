@@ -20,7 +20,7 @@
           <button bindtap="createClick" class="button" type="create">+ 新建活动</button>
         </view>
         <view style="border-bottom: 1rpx solid #ccc;"></view>
-        <block wx:for="{{createList}}">
+        <view id="{{item.acid}}" bindtap="manageDetailClick" wx:for="{{createList}}">
           <view class="list-item" bindtap="itemClick">
             <view class="list-title">
               <text class="status" wx:if="{{item.ac_status == '1'}}">招募中</text>
@@ -34,17 +34,17 @@
             <view hidden="{{item.enrolllist.length == 0}}" class="member">
               <text style="align-self:center;" hidden="{{item.enrolllist.length == 0}}">参与者：</text>
               <view wx:for="{{item.enrolllist}}" class="member-item">
-                <image hidden="{{index >= 5}}" class="avatar" src="{{item.headimgurl}}"></image>
-                <image hidden="{{index < 5}}" class="avatar" src="/image/etc.png"></image>
+                <image hidden="{{index >= 4}}" class="avatar" src="{{item.headimgurl}}"></image>
+                <image hidden="{{!(index == 4)}}" class="avatar" src="/image/etc.png"></image>
               </view>
             </view>
           </view>
-          <view class="detail" id="{{item.acid}}" bindtap="manageDetailClick">查看详情</view>
-        </block>
-        <view hidden="{{loadMyMoreHidden}}" style="padding-top:50rpx; padding-bottom:30rpx; text-align: center;">没有更多了～</view>
+          <view class="detail"></view>
+        </view>
+        <view hidden="{{loadMyMoreHidden && createListt.length >= 10}}" style="padding-top:50rpx; padding-bottom:30rpx; text-align: center;">没有更多了～</view>
       </view>
       <view class="weui-tab__content" hidden="{{activeIndex != 1}}">
-        <block wx:for="{{joinList}}">
+        <view id="{{item.acid}}" bindtap="joinDetailClick" wx:for="{{joinList}}">
           <view class="list-item" id="{{item.id}}" bindtap="itemClick">
             <view class="creater">
               <image class="avatar" src="{{item.headimgurl}}"></image>
@@ -62,13 +62,13 @@
             <view hidden="{{item.enrolllist.length == 0}}" class="member">
               <text style="align-self:center;" hidden="{{item.enrolllist.length == 0}}">参与者：</text>
               <view wx:for="{{item.enrolllist}}" class="member-item">
-                <image hidden="{{index >= 5}}" class="avatar" src="{{item.headimgurl}}"></image>
-                <image hidden="{{index < 5}}" class="avatar" src="/image/etc.png"></image>
+                <image hidden="{{index >= 4}}" class="avatar" src="{{item.headimgurl}}"></image>
+                <image hidden="{{!(index == 4)}}" class="avatar" src="/image/etc.png"></image>
               </view>
             </view>
           </view>
-          <view class="detail" id="{{item.acid}}" bindtap="joinDetailClick">查看详情</view>
-        </block>
+          <view class="detail"></view>
+        </view>
         <view hidden="{{loadEnrollMoreHidden}}" style="padding-top:50rpx; padding-bottom:30rpx; text-align: center;">没有更多了～</view>
       </view>
     </view>

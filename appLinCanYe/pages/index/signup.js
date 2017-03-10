@@ -3,7 +3,7 @@ Page({
   data: {
     departArray: ['技术部', '产品部', '视觉部', '综合部', '运营部'],
     departIndex: 0,
-    userInfo: {},
+    userInfo: null,
     name: "",
     mobile: "",
     department: "",
@@ -21,8 +21,8 @@ Page({
     }
 
     var that = this
-    //调用应用实例的方法获取全局数据
-    app.getUserInfo(function (userInfo) {
+    //调用应用实例的方法获取数据
+    this.getUserInfo(function (userInfo) {
       //更新数据
       that.setData({
         userInfo: userInfo,
@@ -33,6 +33,24 @@ Page({
         userid: option.userid,
       })
     })
+  },
+
+  //获取用户信息
+  getUserInfo: function (cb) {
+    console.log("getUserInfo")
+    if (this.data.userInfo) {
+      console.log("url " + userInfo.avatarUrl)
+      typeof cb == "function" && cb(this.data.userInfo)
+    } else {
+      //调用登录接口
+      console.log("geturl ")
+      var that = this
+      wx.getUserInfo({
+        success: function (res) {
+          typeof cb == "function" && cb(res.userInfo)
+        }
+      })
+    }
   },
 
   //部门处理函数
@@ -75,37 +93,19 @@ Page({
   //插入用户数据
   addUserInfo: function (cb, openid, department, name, mobile, nickname, headimgurl) {
     var that = this
-    wx.request({
-      url: app.globalData.urlPrefix + '/index.php/Xcx/Date/addUserInfo',
-      data: {
-        openid: openid,
-        department: department,
-        name: name,
-        mobile: mobile,
-        nickname: nickname,
-        headimgurl: headimgurl,
-      },
-      method: 'POST',
-      header: {
-        'content-type': 'application/x-www-form-urlencoded'
-      },
-      success: function (res) {
-        console.log(res.data);
-        if (res.data.status === 1) {
-          wx.setStorageSync('openid', openid)
-          console.log("userid" + res.data.data.userid)
-          wx.setStorageSync('userid', res.data.data.userid)
-          wx.redirectTo({
-            url: "/pages/index/index"
-          })
-        } else {
-          typeof cb == "function" && cb(res)
-        }
-      },
-      fail: function (res) {
-        console.log(res.data)
-      }
-    });
+    app.postApi('/index.php/Xcx/Date/addUserInfo', {
+      third_session: app.globalData.third_session,
+      department: department,
+      name: name,
+      mobile: mobile,
+      nickname: nickname,
+      headimgurl: headimgurl,
+    }, function (res) {
+      console.log(res)
+      wx.redirectTo({
+        url: "/pages/index/index"
+      })
+    })
   },
 
   //修改用户数据

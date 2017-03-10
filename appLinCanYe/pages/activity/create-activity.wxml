@@ -3,7 +3,7 @@
     <view class="title">新建活动</view>
     <view class="profile">
       <text>活动主题：</text>
-      <input bindblur="bindTitleChange" placeholder="请填写主题" auto-focus/>
+      <input focus="true" bindblur="bindTitleChange" placeholder="请填写主题" />
     </view>
     <view class="profile">
       <picker bindchange="bindSDateChange" mode="date" value="{{startDate}}">
@@ -31,16 +31,14 @@
     </view>
     <view class="profile">
       <text>活动地点：</text>
-      <input bindblur="bindAddressChange" placeholder="请输入活动地址" auto-focus/>
+      <image bindtap="bindLocationTap" style="padding-right:10rpx; width:40rpx;height:40rpx;" src="/image/location.png"></image>
+      <textarea class="issue" style="margin-left:0rpx;" placeholder-style="text-size:0.8rem;" bindblur="bindAddressChange" placeholder="请输入活动地址" value="{{address}}"/>
     </view>
     <view class="profile">
       <text>备注：</text>
-      <textarea bindblur="bindIssueChange" class="issue" placeholder="非必填，可填写活动特别事项" maxlength="100" auto-focus/>
+      <textarea bindblur="bindIssueChange" class="issue" placeholder="非必填，可填写活动特别事项" placeholder-style="text-size:0.8rem;" maxlength="100" />
     </view>
     <text class="hint">*限制在50字内</text>
     <button bindtap="bindViewTap" class="button" type="issue" size="default">发布</button>
-    <toast hidden="{{toastHidden}}" duration="2000" bindchange="toastChange">
-      {{errInfo}}
-    </toast>
   </view>
 </page>

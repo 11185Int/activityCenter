@@ -5,7 +5,7 @@
     <block wx:for="{{enrolllist}}">
       <view style="margin-top: 10rpx;" hidden="{{item.length == 0 ? true : false}}">
         <view style="marigin-top:20rpx; text-align:center;">{{departArray[index]}}</view>
-        <view style="display: flex; flex-direction: row;">
+        <view style="display: flex; flex-direction: row; flex-wrap:wrap;">
           <block wx:for="{{item}}">
             <view style="display: flex; flex-direction: column;" class="member-item" id="{{item.id}}">
               <image style="width:100rpx; height:100rpx; border-radius:50%;" src="{{item.headimgurl}}"></image>

@@ -6,7 +6,7 @@
 
     <view style="align-self:center;">
     <image bindtap="saveClick" class="operate-img" src="/image/save.png"></image>
-    <image hidden="{{!canDelete}}" bindtap="deleteClick" class="operate-img" src="/image/delete.png"></image>
+    <image hidden="{{!(canDelete=='true')}}" bindtap="deleteClick" class="operate-img" src="/image/delete.png"></image>
     </view>
   </view>
 </page>

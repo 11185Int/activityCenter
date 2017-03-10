@@ -17,10 +17,10 @@
       <text>地址：{{info.address}}</text>
       <view hidden="{{!info.enrolllist}}" bindtap="managePeople">
         <text>已报名：{{info.enrolllist.length}} 人</text>
-        <view class="member">
+        <view hidden="{{info.enrolllist.length == 0}}" class="member">
           <view wx:for="{{info.enrolllist}}" class="member-item">
-            <image hidden="{{index >= 11}}" class="avatar" src="{{item.headimgurl}}"></image>
-            <image hidden="{{index < 11}}" class="avatar" src="/image/etc.png"></image>
+            <image hidden="{{index >= 13}}" class="avatar" src="{{item.headimgurl}}"></image>
+            <image hidden="{{!(index == 14)}}" class="avatar" src="/image/etc.png"></image>
           </view>
         </view>
       </view>

@@ -2,18 +2,16 @@ var app = getApp()
 Page({
     data: {
         url: '',
-        userid: '',
         imgid: '',
-        canDelete: ''
+        canDelete: null
     },
 
     onLoad: function (option) {
         console.log(option)
         this.setData({
             url: option.url,
-            userid: option.userid,
             imgid: option.imgid,
-            canDelete: Boolean(option.canDelete),
+            canDelete: option.canDelete,
         })
 
         console.log("canDelete " + this.data.canDelete)
@@ -21,7 +19,7 @@ Page({
 
     saveClick: function (e) {
         wx.downloadFile({
-            url: this.data.url, //仅为示例，并非真实的资源
+            url: this.data.url,
             success: function (res) {
                 wx.saveFile({
                     tempFilePath: res.tempFilePath,
@@ -52,39 +50,20 @@ Page({
     },
 
     deleteClick: function (e) {
-        wx.request({
-            url: app.globalData.urlPrefix + '/index.php/Xcx/Date/deleteImg',
-            data: {
-                userid: this.data.userid,
-                imgid: this.data.imgid,
-            },
-            method: 'POST',
-            header: {
-                'content-type': 'application/x-www-form-urlencoded'
-            },
-            success: function (res) {
-                // success
-                console.log(res.data)
-                // wx.showToast({
-                //     title: '删除成功',
-                //     icon: "success",
-                //     duration: 2000
-                // })
-                wx.navigateBack({
-                    delta: 1, // 回退前 delta(默认为1) 页面
-                })
-            },
-            fail: function () {
-                // wx.showToast({
-                //     title: '删除失败',
-                //     icon: "success",
-                //     duration: 2000
-                // })
-                // fail
-            },
-            complete: function () {
-                // complete
-            }
+        console.log("imgid " + this.data.imgid)
+        app.postApi('/index.php/Xcx/Date/deleteImg', {
+            third_session: app.globalData.third_session,
+            imgid: this.data.imgid,
+        }, function (res) {
+            console.log(res)
+            // wx.showToast({
+            //     title: '删除成功',
+            //     icon: "success",
+            //     duration: 2000
+            // })
+            wx.navigateBack({
+                delta: 1, // 回退前 delta(默认为1) 页面
+            })
         })
     }
 })

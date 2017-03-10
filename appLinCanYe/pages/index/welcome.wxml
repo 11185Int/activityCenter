@@ -1,0 +1,5 @@
+<page>
+    <view class="container">
+        <image class="image" src="/image/run.png"></image>
+    </view>
+</page>

@@ -4,12 +4,11 @@
 var app = getApp()
 Page({
   data: {
-    url: '',
+    url: app.globalData.urlPrefix + "/",
     info: {},
     briefenrolllist: {},
-    userid: '',
     acid: '',
-    people: '',
+    people: '1',
     reason: '',
     status: '',
     joinHidden: true,
@@ -19,30 +18,22 @@ Page({
     // 页面初始化 options为页面跳转所带来的参数
     console.log('onLoad')
     var that = this
-    this.setData({
-      url: app.globalData.urlPrefix + "/",
-      userid: wx.getStorageSync('userid'),
-      acid: app.globalData.acid,
-    })
+    if (options) {
+      this.data.acid = options.acid
+    }
+
   },
 
   onShow: function () {
     console.log('onShow')
     var that = this
-    this.getActInfo(function (res) {
-      that.setData({
-        info: res.data.data.acinfo,
-        briefenrolllist: res.data.data.acinfo.enrolllist.slice(0, 11),
-        actimglist: res.data.data.acinfo.imgList,
-      })
-      app.globalData.enrolllist = that.data.info.enrolllist
-    }, this.data.userid, this.data.acid)
+    this.getActInfo()
   },
 
   onShareAppMessage: function () {
     return {
       title: '约跑',
-      path: '/pages/activity/join-activity'
+      path: '/pages/activity/join-activity?acid=' + this.data.acid
     }
   },
   joinClick: function () {
@@ -60,25 +51,11 @@ Page({
     if (this.data.people == '') {
       this.data.people = 1
     }
-    this.enrollYes(function (res) {
-      that.setData({
-        joinHidden: true
-      })
-      wx.redirectTo({
-        url: '/pages/activity/join-activity',
-      })
-    }, this.data.userid, this.data.acid, this.data.people)
+    this.enrollYes()
   },
   refuseChange: function (e) {
     var that = this
-    this.enrollNo(function (res) {
-      that.setData({
-        refuseHidden: true
-      })
-      wx.redirectTo({
-        url: '/pages/activity/join-activity',
-      })
-    }, this.data.userid, this.data.acid, this.data.reason)
+    this.enrollNo()
   },
 
   peopleChange: function (e) {
@@ -102,113 +79,63 @@ Page({
   },
 
   //获取活动详情
-  getActInfo: function (cb, userid, acid) {
+  getActInfo: function () {
     var that = this
-    console.log('userid' + userid)
-    console.log("acid " + acid)
-    wx.request({
-      url: app.globalData.urlPrefix + '/index.php/Xcx/Date/acInfo',
-      data: {
-        userid: userid,
-        acid: acid
-      },
-      method: 'POST',
-      header: {
-        'content-type': 'application/x-www-form-urlencoded'
-      },
-      success: function (res) {
-        console.log(res.data);
-        if (res.data.msg === "成功" && typeof cb == "function") {
-          cb(res)
-        }
-      },
-      fail: function (res) {
-        console.log(res.data)
-      }
-    });
+    app.postApi('/index.php/Xcx/Date/acInfo', {
+      third_session: app.globalData.third_session,
+      acid: this.data.acid,
+    }, function (res) {
+      that.setData({
+        info: res.data.acinfo,
+        briefenrolllist: res.data.acinfo.enrolllist.slice(0, 11),
+        actimglist: res.data.acinfo.imgList,
+      })
+      app.globalData.enrolllist = that.data.info.enrolllist
+    })
   },
   //参与活动
-  enrollYes: function (cb, userid, acid, people) {
+  enrollYes: function () {
     var that = this
-    console.log('userid' + userid)
-    console.log('people ' + people)
-    wx.request({
-      url: app.globalData.urlPrefix + '/index.php/Xcx/Date/enrollYes',
-      data: {
-        userid: userid,
-        acid: acid,
-        people: people,
-      },
-      method: 'POST',
-      header: {
-        'content-type': 'application/x-www-form-urlencoded'
-      },
-      success: function (res) {
-        console.log(res.data);
-        if (res.data.status === 1 && typeof cb == "function") {
-          cb(res)
-          wx.showToast({
-            title: '报名成功',
-            icon: "success",
-            duration: 2000
-          })
-        } else {
-          that.setData({
-            joinHidden: true
-          })
-          wx.showToast({
-            title: res.data.msg,
-            icon: "success",
-            duration: 2000
-          })
-        }
-      },
-      fail: function (res) {
-        console.log(res.data)
-      }
-    });
+    console.log("people " + this.data.people)
+    app.postApi('/index.php/Xcx/Date/enrollYes', {
+      third_session: app.globalData.third_session,
+      acid: this.data.acid,
+      people: this.data.people,
+    }, function (res) {
+      that.setData({
+        joinHidden: true
+      })
+      wx.showToast({
+        title: '报名成功',
+        icon: "success",
+        duration: 2000
+      })
+      wx.redirectTo({
+        url: '/pages/activity/join-activity?acid=' + that.data.acid,
+      })
+    })
   },
 
   //拒绝活动
-  enrollNo: function (cb, userid, acid, reason) {
+  enrollNo: function () {
     var that = this
-    console.log('userid' + userid)
-    console.log('acid' + acid)
-    wx.request({
-      url: app.globalData.urlPrefix + '/index.php/Xcx/Date/enrollNo',
-      data: {
-        userid: userid,
-        acid: acid,
-        reason: reason,
-      },
-      method: 'POST',
-      header: {
-        'content-type': 'application/x-www-form-urlencoded'
-      },
-      success: function (res) {
-        console.log(res.data);
-        if (res.data.status === 1 && typeof cb == "function") {
-          cb(res)
-          wx.showToast({
-            title: '拒绝成功',
-            icon: "success",
-            duration: 2000
-          })
-        } else {
-          that.setData({
-            refuseHidden: true
-          })
-          wx.showToast({
-            title: res.data.msg,
-            icon: "fail",
-            duration: 2000
-          })
-        }
-      },
-      fail: function (res) {
-        console.log(res.data)
-      }
-    });
+    app.postApi('/index.php/Xcx/Date/enrollNo', {
+      third_session: app.globalData.third_session,
+      acid: this.data.acid,
+      reason: this.data.reason,
+    }, function (res) {
+      that.setData({
+        refuseHidden: true
+      })
+      wx.showToast({
+        title: '拒绝成功',
+        icon: "success",
+        duration: 2000
+      })
+      wx.redirectTo({
+        url: '/pages/activity/join-activity?acid=' + that.data.acid,
+      })
+    })
   },
 
   //管理参与人员
@@ -228,11 +155,11 @@ Page({
       + '&canDelete=false',
     })
   },
-  
+
   //拨打电话
   call: function () {
     wx.makePhoneCall({
-      phoneNumber: this.data.info.mobile 
+      phoneNumber: this.data.info.mobile
     })
   }
 })
